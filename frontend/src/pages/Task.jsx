@@ -34,7 +34,7 @@ const Task = () => {
       </div>
 
       <div className="w-full max-w-6xl bg-base-50 rounded-xl shadow p-4 sm:p-6">
-        <TaskTable data={tasks} />
+        <TaskTable data={tasks} isLoading={loading} />
       </div>
     </div>
   );

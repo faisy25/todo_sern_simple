@@ -4,7 +4,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-const TaskTable = ({ data }) => {
+const TaskTable = ({ data, isLoading }) => {
   const columns = [
     {
       header: "ID",
@@ -85,7 +85,9 @@ const TaskTable = ({ data }) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.length > 0 ? (
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : table.getRowModel().rows.length > 0 ? (
             table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
