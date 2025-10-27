@@ -1,0 +1,22 @@
+Frontend login
+
+[1] Login
+     ↓
+[2] Backend returns accessToken + refreshToken
+     ↓
+[3] Frontend stores both (in localStorage)
+     ↓
+[4] Frontend calls API with accessToken in headers
+     ↓
+[5] If accessToken expired → call /auth/refresh with refreshToken
+     ↓
+[6] Backend verifies refreshToken → returns new accessToken
+     ↓
+[7] Frontend updates accessToken → continues normally
+     ↓
+[8] Logout → frontend deletes both tokens from localStorage
+
+
+This is above flow will be the login frontend api's.
+
+

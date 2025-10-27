@@ -1,0 +1,127 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./generated/prisma"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model task {
+  task_id     Int         @id @default(autoincrement())
+  title       String
+  description String?     @db.Text
+  status      task_status @default(PENDING)
+  due_date    DateTime?
+  user_id     Int
+  created_by  Int
+  updated_by  Int?
+  created_at  DateTime    @default(now())
+  updated_at  DateTime?
+  is_deleted  Boolean     @default(false)
+
+  @@index([user_id], map: "task_user_id_fkey")
+}
+
+model user {
+  user_id          Int                @id @default(autoincrement())
+  name             String
+  username         String             @unique
+  password         String
+  created_by       Int                @default(1)
+  updated_by       Int?
+  created_at       DateTime           @default(now())
+  updated_at       DateTime?
+  is_deleted       Boolean            @default(false)
+  user_education   user_education[]
+  user_work_detail user_work_detail[]
+  user_info        user_info?
+}
+
+model user_education {
+  user_education_id Int                         @id @default(autoincrement())
+  institution       String
+  degree            String
+  field_of_study    String?
+  start_date        DateTime
+  end_date          DateTime?
+  gpa               Float?                      @db.Float
+  user_id           Int
+  created_by        Int
+  updated_by        Int?
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime?
+  is_deleted        Boolean                     @default(false)
+  user              user                        @relation(fields: [user_id], references: [user_id])
+  attachment        user_education_attachment[]
+
+  @@index([user_id], map: "user_education_user_id_fkey")
+}
+
+model user_education_attachment {
+  user_education_attachment_id Int       @id @default(autoincrement())
+  file_url                     String    @db.VarChar(255)
+  file_type                    String?   @db.VarChar(100)
+  user_education_id            Int
+  created_by                   Int
+  updated_by                   Int?
+  created_at                   DateTime  @default(now())
+  updated_at                   DateTime?
+  is_deleted                   Boolean   @default(false)
+
+  user_education user_education @relation(fields: [user_education_id], references: [user_education_id])
+
+  @@index([user_education_id], map: "user_education_attachment_education_id_fkey")
+}
+
+model user_info {
+  user_info_id        Int              @id @default(autoincrement())
+  gender              user_info_gender
+  blood_group         String?          @db.VarChar(10)
+  height_cm           Int?
+  weight_kg           Float?           @db.Float
+  profile_picture_url String?          @db.VarChar(255)
+  user_id             Int              @unique
+  created_by          Int
+  updated_by          Int?
+  created_at          DateTime         @default(now())
+  updated_at          DateTime?
+  is_deleted          Boolean          @default(false)
+  user                user             @relation(fields: [user_id], references: [user_id])
+}
+
+model user_work_detail {
+  user_work_detail_id Int       @id @default(autoincrement())
+  company             String
+  title               String
+  start_date          DateTime
+  end_date            DateTime?
+  description         String?   @db.Text
+  attachment_url      String?   @db.VarChar(255)
+  attachment_type     String?   @db.VarChar(100)
+  user_id             Int
+  created_by          Int
+  updated_by          Int?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime?
+  is_deleted          Boolean   @default(false)
+  user                user      @relation(fields: [user_id], references: [user_id])
+
+  @@index([user_id], map: "user_work_detail_user_id_fkey")
+}
+
+enum user_info_gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum task_status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
